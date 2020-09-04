@@ -15,11 +15,12 @@ axios
 		let cardData = res.data;
 		const newUserCard = document.querySelector(".cards");
 		const userCard = userCardMaker(cardData);
-		newUserCard.appendChild(userCard);
+		newUserCard.prepend(userCard);
 	})
 	.catch((err) => {
 		console.log(err);
 	});
+
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -44,7 +45,30 @@ axios
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+	"tetondan",
+	"dustinmyers",
+	"justsml",
+	"luishrd",
+	"bigknell",
+];
+
+followersArray.forEach((item) => {
+	axios
+		.get(
+			`https://cors-anywhere.herokuapp.com/https://api.github.com/users/${item}`
+		)
+		.then((res) => {
+			console.log(res.data);
+			let cardData = res.data;
+			const newUserCard = document.querySelector(".cards");
+			const userCard = userCardMaker(cardData);
+			newUserCard.appendChild(userCard);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+});
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -68,14 +92,16 @@ const followersArray = [];
 
 /*
   List of LS Instructors Github username's:
-    tetondan
-    dustinmyers
-    justsml
-    luishrd
+    tetondan,
+    dustinmyers,
+    justsml,
+    luishrd,
     bigknell
 */
 
 function userCardMaker(cardObj) {
+	// A function to create each element
+	// Excessive? Probably! Efficient? Idk! Hotel? Trivago!
 	function elementCreator({
 		element = "",
 		myClass = "",
@@ -86,13 +112,21 @@ function userCardMaker(cardObj) {
 	}) {
 		// Create the element
 		const newElement = document.createElement(`${element}`);
+
 		// Give it a class
 		myClass !== "" ? newElement.classList.add(`${myClass}`) : (myClass = null);
+
 		// Give it some text
 		text !== "" ? (newElement.textContent = `${text}`) : (text = null);
-		// If image, give source
-		src !== "" ? (newElement.src = `${src}`) : (src = null);
-		// Prepending or appending?
+
+		// Give it some sauce
+		src !== "" && element === "img"
+			? (newElement.src = `${src}`)
+			: src !== "" && element === "a"
+			? newElement.setAttribute("href", `${src}`)
+			: (src = null);
+
+		// Prepending or appending, my child?
 		pend === "prepend"
 			? pendTarget.prepend(newElement)
 			: pend === "appendChild"
@@ -130,5 +164,79 @@ function userCardMaker(cardObj) {
 		pendTarget: cardInfo,
 	});
 
+	const infoUsername = elementCreator({
+		element: "p",
+		myClass: "username",
+		text: `${cardObj.login}`,
+		pend: "appendChild",
+		pendTarget: cardInfo,
+	});
+
+	const infoLocation = elementCreator({
+		element: "p",
+		text: `Location: ${
+			cardObj.location !== null
+				? cardObj.location
+				: (cardObj.location = "Unknown")
+		}`,
+		pend: "appendChild",
+		pendTarget: cardInfo,
+	});
+
+	const infoProfile = elementCreator({
+		element: "p",
+		text: `Profile: ${profileLink !== undefined ? profileLink : ""}`,
+		pend: "appendChild",
+		pendTarget: cardInfo,
+	});
+
+	const profileLink = elementCreator({
+		element: "a",
+		text: `${cardObj.html_url}`,
+		src: `${cardObj.html_url}`,
+		pend: "appendChild",
+		pendTarget: infoProfile,
+	});
+
+	const infoFollowers = elementCreator({
+		element: "p",
+		text: `Followers: ${cardObj.followers}`,
+		pend: "appendChild",
+		pendTarget: cardInfo,
+	});
+
+	const infoFollowing = elementCreator({
+		element: "p",
+		text: `Following: ${cardObj.following}`,
+		pend: "appendChild",
+		pendTarget: cardInfo,
+	});
+	const infoBio = elementCreator({
+		element: "p",
+		text: `Bio: ${
+			cardObj.bio !== null
+				? cardObj.bio
+				: "I've yet to write myself a bio, so here is some filler text for you to read. Enjoy"
+		}`,
+		pend: "appendChild",
+		pendTarget: cardInfo,
+	});
+
 	return cardContainer;
+}
+{
+	/* <div class="card">
+      <img src={image url of user} />
+      <div class="card-info">
+        <h3 class="name">{users name}</h3>
+        <p class="username">{users user name}</p>
+        <p>Location: {users location}</p>
+        <p>Profile:
+          <a href={address to users github page}>{address to users github page}</a>
+        </p>
+        <p>Followers: {users followers count}</p>
+        <p>Following: {users following count}</p>
+        <p>Bio: {users bio}</p>
+      </div>
+    </div> */
 }
