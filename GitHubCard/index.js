@@ -1,9 +1,25 @@
+// const { default: Axios } = require("axios");
+
+import axios from "axios";
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
-
+axios
+	.get(
+		"https://cors-anywhere.herokuapp.com/https://api.github.com/users/KindredSoul"
+	)
+	.then((res) => {
+		console.log(res.data);
+		let cardData = res.data;
+		const newUserCard = document.querySelector(".cards");
+		const userCard = userCardMaker(cardData);
+		newUserCard.appendChild(userCard);
+	})
+	.catch((err) => {
+		console.log(err);
+	});
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -58,3 +74,61 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+function userCardMaker(cardObj) {
+	function elementCreator({
+		element = "",
+		myClass = "",
+		src = "",
+		text = "",
+		pend = "",
+		pendTarget,
+	}) {
+		// Create the element
+		const newElement = document.createElement(`${element}`);
+		// Give it a class
+		myClass !== "" ? newElement.classList.add(`${myClass}`) : (myClass = null);
+		// Give it some text
+		text !== "" ? (newElement.textContent = `${text}`) : (text = null);
+		// If image, give source
+		src !== "" ? (newElement.src = `${src}`) : (src = null);
+		// Prepending or appending?
+		pend === "prepend"
+			? pendTarget.prepend(newElement)
+			: pend === "appendChild"
+			? pendTarget.appendChild(newElement)
+			: pend === "append"
+			? pendTarget.append(newElement)
+			: (pend = null);
+
+		// console.log(newElement);
+		return newElement;
+	}
+
+	const cardContainer = elementCreator({ element: "div", myClass: "card" });
+	console.log(cardContainer);
+
+	const cardImg = elementCreator({
+		element: "img",
+		src: `${cardObj.avatar_url}`,
+		pend: "appendChild",
+		pendTarget: cardContainer,
+	});
+
+	const cardInfo = elementCreator({
+		element: "div",
+		myClass: "card-info",
+		pend: "appendChild",
+		pendTarget: cardContainer,
+	});
+
+	const infoName = elementCreator({
+		element: "h3",
+		myClass: "name",
+		text: `${cardObj.name}`,
+		pend: "appendChild",
+		pendTarget: cardInfo,
+	});
+
+	return cardContainer;
+}
