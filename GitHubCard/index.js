@@ -6,6 +6,8 @@ import axios from "axios";
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
+
+// Accessing data for the userCard
 axios
 	.get(
 		"https://cors-anywhere.herokuapp.com/https://api.github.com/users/KindredSoul"
@@ -45,6 +47,7 @@ axios
     user, and adding that card to the DOM.
 */
 
+// Array of users
 const followersArray = [
 	"tetondan",
 	"dustinmyers",
@@ -53,6 +56,7 @@ const followersArray = [
 	"bigknell",
 ];
 
+// Iterating through the users array and creating a card for each user
 followersArray.forEach((item) => {
 	axios
 		.get(
@@ -99,9 +103,11 @@ followersArray.forEach((item) => {
     bigknell
 */
 
+// A function to create a card
 function userCardMaker(cardObj) {
 	// A function to create each element
 	// Excessive? Probably! Efficient? Idk! Hotel? Trivago!
+	// Note: The function does not reflect 100% of my intentions, only about 90%. Either way, it works
 	function elementCreator({
 		element = "",
 		myClass = "",
@@ -135,7 +141,6 @@ function userCardMaker(cardObj) {
 			? pendTarget.append(newElement)
 			: (pend = null);
 
-		// console.log(newElement);
 		return newElement;
 	}
 
@@ -223,20 +228,4 @@ function userCardMaker(cardObj) {
 	});
 
 	return cardContainer;
-}
-{
-	/* <div class="card">
-      <img src={image url of user} />
-      <div class="card-info">
-        <h3 class="name">{users name}</h3>
-        <p class="username">{users user name}</p>
-        <p>Location: {users location}</p>
-        <p>Profile:
-          <a href={address to users github page}>{address to users github page}</a>
-        </p>
-        <p>Followers: {users followers count}</p>
-        <p>Following: {users following count}</p>
-        <p>Bio: {users bio}</p>
-      </div>
-    </div> */
 }
